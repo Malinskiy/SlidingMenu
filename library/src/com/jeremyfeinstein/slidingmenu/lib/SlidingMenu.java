@@ -14,7 +14,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -361,8 +360,16 @@ public class SlidingMenu extends RelativeLayout {
 	 * Retrieves the current content.
 	 * @return the current content
 	 */
-	public View getContent() {
-		return mViewAbove.getContent();
+	public View getWrappedContent() {
+		return mViewAbove.getDecorView();
+	}
+
+	/**
+	 * Retrieves the current content decor view
+	 * @return current decor view
+	 */
+	public FrameLayout getContentDecor() {
+		return mViewAbove.getDecorView();
 	}
 
 	/**
@@ -1005,11 +1012,11 @@ public class SlidingMenu extends RelativeLayout {
 		boolean layer = percentOpen > 0.0f && percentOpen < 1.0f;
 		final int layerType = layer ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE;
 
-		if (layerType != getContent().getLayerType()) {
+		if (layerType != getWrappedContent().getLayerType()) {
 			getHandler().post(new Runnable() {
 				public void run() {
 					Log.v(TAG, "changing layerType. hardware? " + (layerType == View.LAYER_TYPE_HARDWARE));
-					getContent().setLayerType(layerType, null);
+					getWrappedContent().setLayerType(layerType, null);
 					getMenu().setLayerType(layerType, null);
 					if (getSecondaryMenu() != null) {
 						getSecondaryMenu().setLayerType(layerType, null);
@@ -1018,5 +1025,4 @@ public class SlidingMenu extends RelativeLayout {
 			});
 		}
 	}
-
 }
